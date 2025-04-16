@@ -1,0 +1,265 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PantryPal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="900"
+             x:Class="PantryPal.Views.AddItem"
+             x:DataType="vm:FoodItem"
+             >
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBox">
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="MinHeight" Value="50"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Right"/>
+    </Style>
+    <Style Selector="CheckBox">
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="RadioButton">
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Padding" Value="10"/>
+    </Style>
+  </UserControl.Styles>
+  
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>      
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="0.6*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    
+    <TextBlock Text="Add Food Item" FontSize="24" FontWeight="Bold" Margin="15" Grid.ColumnSpan="2"/>
+    
+    <Button Content="Import" Grid.Column="2" Command="{Binding Import_Click}"/>
+
+    <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="Auto" MinHeight="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+          <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="1.25*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Item Name" Grid.Row="0" Grid.ColumnSpan="2" />
+        <TextBlock Text="Emoji" Grid.Row="0" Grid.Column="2"/>
+        <TextBox Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}" HorizontalContentAlignment="Left" TextInputOptions.AutoCapitalization="True" TextInputOptions.ContentType="Name"/>
+
+        <ComboBox FontSize="24" SelectedItem="{Binding Emoji}" Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Center" >
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel MaxWidth="425"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+
+          <ComboBox.Items>
+            <x:String>🍕</x:String>
+            <x:String>🍔</x:String>
+            <x:String>🍟</x:String>
+            <x:String>🌭</x:String>
+            <x:String>🍿</x:String>
+            <x:String>🧂</x:String>
+            <x:String>🥓</x:String>
+            <x:String>🥚</x:String>
+            <x:String>🍳</x:String>
+            <x:String>🧇</x:String>
+            <x:String>🥞</x:String>
+            <x:String>🧈</x:String>
+            <x:String>🍞</x:String>
+            <x:String>🥐</x:String>
+            <x:String>🥨</x:String>
+            <x:String>🥯</x:String>
+            <x:String>🥖</x:String>
+            <x:String>🫓</x:String>
+            <x:String>🧀</x:String>
+            <x:String>🥗</x:String>
+            <x:String>🥙</x:String>
+            <x:String>🥪</x:String>
+            <x:String>🌮</x:String>
+            <x:String>🌯</x:String>
+            <x:String>🫔</x:String>
+            <x:String>🥫</x:String>
+            <x:String>🍖</x:String>
+            <x:String>🍗</x:String>
+            <x:String>🥩</x:String>
+            <x:String>🍠</x:String>
+            <x:String>🥟</x:String>
+            <x:String>🥠</x:String>
+            <x:String>🥡</x:String>
+            <x:String>🍱</x:String>
+            <x:String>🍘</x:String>
+            <x:String>🍙</x:String>
+            <x:String>🍚</x:String>
+            <x:String>🍛</x:String>
+            <x:String>🍜</x:String>
+            <x:String>🦪</x:String>
+            <x:String>🍣</x:String>
+            <x:String>🍤</x:String>
+            <x:String>🍥</x:String>
+            <x:String>🥮</x:String>
+            <x:String>🍢</x:String>
+            <x:String>🧆</x:String>
+            <x:String>🥘</x:String>
+            <x:String>🍲</x:String>
+            <x:String>🫕</x:String>
+            <x:String>🍝</x:String>
+            <x:String>🥣</x:String>
+            <x:String>🥧</x:String>
+            <x:String>🍦</x:String>
+            <x:String>🍧</x:String>
+            <x:String>🍨</x:String>
+            <x:String>🍩</x:String>
+            <x:String>🍪</x:String>
+            <x:String>🎂</x:String>
+            <x:String>🍰</x:String>
+            <x:String>🧁</x:String>
+            <x:String>🍫</x:String>
+            <x:String>🍬</x:String>
+            <x:String>🍭</x:String>
+            <x:String>🍡</x:String>
+            <x:String>🍮</x:String>
+            <x:String>🍯</x:String>
+            <x:String>🍼</x:String>
+            <x:String>🥛</x:String>
+            <x:String>🧃</x:String>
+            <x:String>☕</x:String>
+            <x:String>🫖</x:String>
+            <x:String>🍵</x:String>
+            <x:String>🧉</x:String>
+            <x:String>🍶</x:String>
+            <x:String>🍾</x:String>
+            <x:String>🍷</x:String>
+            <x:String>🍸</x:String>
+            <x:String>🍹</x:String>
+            <x:String>🍺</x:String>
+            <x:String>🍻</x:String>
+            <x:String>🥂</x:String>
+            <x:String>🥃</x:String>
+            <x:String>🫗</x:String>
+            <x:String>🧊</x:String>
+            <x:String>🥤</x:String>
+            <x:String>🧋</x:String>
+            <x:String>🥢</x:String>
+            <x:String>🍽️</x:String>
+            <x:String>🍴</x:String>
+            <x:String>🥄</x:String>
+            <x:String>🏺</x:String>
+            <x:String>🥝</x:String>
+            <x:String>🥥</x:String>
+            <x:String>🍇</x:String>
+            <x:String>🍈</x:String>
+            <x:String>🍉</x:String>
+            <x:String>🍊</x:String>
+            <x:String>🍋</x:String>
+            <x:String>🍌</x:String>
+            <x:String>🍍</x:String>
+            <x:String>🥭</x:String>
+            <x:String>🍎</x:String>
+            <x:String>🍏</x:String>
+            <x:String>🍐</x:String>
+            <x:String>🍑</x:String>
+            <x:String>🍒</x:String>
+            <x:String>🍓</x:String>
+            <x:String>🫐</x:String>
+            <x:String>🍅</x:String>
+            <x:String>🫒</x:String>
+            <x:String>🍆</x:String>
+            <x:String>🌽</x:String>
+            <x:String>🌶️</x:String>
+            <x:String>🫑</x:String>
+            <x:String>🍄</x:String>
+            <x:String>🥑</x:String>
+            <x:String>🥒</x:String>
+            <x:String>🥬</x:String>
+            <x:String>🥦</x:String>
+            <x:String>🥔</x:String>
+            <x:String>🧄</x:String>
+            <x:String>🧅</x:String>
+            <x:String>🥕</x:String>
+            <x:String>🌰</x:String>
+            <x:String>🫚</x:String>
+            <x:String>🫛</x:String>
+            <x:String>🥜</x:String>
+            <x:String>🫘</x:String>
+          </ComboBox.Items>
+        </ComboBox>
+
+        <TextBlock Text="Category" HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2"/>
+        <TextBlock Text="Expiration Date" Grid.Row="2" Grid.Column="2"/>
+        <RadioButton Content="Food" GroupName="FoodOrSnack" Grid.Row="3" IsChecked="{Binding IsFood}"/>
+        <RadioButton Content="Snack" GroupName="FoodOrSnack" Grid.Row="3" Grid.Column="1" IsChecked="{Binding IsSnack}"/>
+
+        <Panel Grid.Row="3" Grid.Column="2" Margin="10" >
+          <Panel.Styles>
+            <Style Selector="TextBlock">
+              <Setter Property="Margin" Value="0"/>
+            </Style>
+          </Panel.Styles>
+
+          <CalendarDatePicker HorizontalAlignment="Stretch"  SelectedDate="{Binding ExpirationDate}" DisplayDateStart="{Binding StartingDate}" IsTodayHighlighted="True" />
+        </Panel>        
+
+        <TextBlock Text="Standard Serving" Grid.Row="4" Grid.ColumnSpan="2"/>
+        <TextBox Text="{Binding Calories}" Watermark="Calories" Grid.Row="4" Grid.Column="2" GotFocus="Textbox_GotFocus" TextInputOptions.ContentType="Number" TextChanged="TextBox_TextChanged" Tag="Calories"/>
+        
+        <CheckBox Content="Parts Per Serving" Grid.Row="5" Grid.ColumnSpan="2" IsChecked="{Binding UsePartsPerServing}"/>
+        <TextBox Watermark="Parts Per Serving" Grid.Row="5" Grid.Column="2" IsVisible="{Binding UsePartsPerServing}" Text="{Binding PartsPerServing}" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="PartsPerServing"/>
+        
+        <CheckBox Content="Number of Servings" Grid.Row="6" Grid.ColumnSpan="2" IsChecked="{Binding UseNumberOfServings}"/>  
+        <TextBox Grid.Row="6" Grid.Column="2" IsVisible="{Binding UseNumberOfServings}" Text="{Binding MaxQuantity}" Watermark="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="Quantity"/>
+
+        <CheckBox Content="Minimum Servings / Meal" Grid.Row="7" Grid.ColumnSpan="2" IsChecked="{Binding UseMinServings}"/>
+        <TextBox Grid.Row="7" Grid.Column="2" IsVisible="{Binding UseMinServings}" Text="{Binding MinServings}" Watermark="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="MinServings"/>
+        
+        <CheckBox Content="Maximum Servings / Meal" Grid.Row="8" Grid.ColumnSpan="2" IsChecked="{Binding UseMaxServings}"/>
+        <TextBox Grid.Row="8" Grid.Column="2" IsVisible="{Binding UseMaxServings}" Text="{Binding MaxServings}" Watermark="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="MaxServings"/>
+        
+        <TextBlock Text="Location:" Grid.Row="9" Grid.ColumnSpan="2"/>
+        <TextBox Text="{Binding Location}" Grid.Row="9" Grid.Column="2" Watermark="e.g. Pantry/Fridge/Table" GotFocus="Textbox_GotFocus" TextInputOptions.AutoCapitalization="True"  TextInputOptions.ContentType="Name"/>
+      </Grid>
+    </ScrollViewer>
+    
+    
+    <Button Grid.Row="9" Content="Cancel" Command="{Binding Cancel_Click}"/>
+    <Button Grid.Row="9" Grid.Column="2" Content="Add" Command="{Binding Add_Click}"/>
+  </Grid>
+</UserControl>

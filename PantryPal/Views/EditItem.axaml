@@ -1,0 +1,127 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PantryPal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="900"
+             x:Class="PantryPal.Views.EditItem"
+             x:DataType="vm:FoodItem">
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBox">
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="MinHeight" Value="50"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Right"/>
+    </Style>
+    <Style Selector="CheckBox">
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="RadioButton">
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="10"/>
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Padding" Value="10"/>
+    </Style>
+  </UserControl.Styles>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <TextBlock Text="Edit Food Item" FontSize="24" FontWeight="Bold" Margin="15" Grid.ColumnSpan="3"/>
+
+    <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3">
+      <ScrollViewer.Styles>
+        <Style Selector="Button">
+          <Setter Property="FontSize" Value="24"/>          
+        </Style>
+        <Style Selector="TextBox">
+          <Setter Property="FontSize" Value="16"/>
+        </Style>
+      </ScrollViewer.Styles>
+      <StackPanel>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Text="{Binding Emoji}" FontSize="24"/>
+          <TextBlock Text="{Binding Name}" Grid.Column="1" FontSize="24"/>
+          <TextBlock Text="{Binding ExpirationDate, StringFormat='M/d/yyyy'}" Grid.Column="2"/>
+        </Grid>
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" MinWidth="100"/>   
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Text="Remaining Servings"/>
+          <TextBox Grid.Column="1" Text="{Binding Quantity}" TextInputOptions.ContentType="Number" TextChanged="Servings_TextChanged" LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"/>
+        </Grid>
+        
+        <Slider Margin="10" Maximum="{Binding MaxQuantity}" Value="{Binding Quantity}" IsEnabled="{Binding SliderEnabled}"/>
+
+        <TextBlock Text="Quick options:"/>
+        <Button Content="Eat One Serving" Command="{Binding Eat_One}"/>
+        <Button Content="Eat Suggested Serving" Command="{Binding Eat_Suggested}"/>
+        <Button Content="Edit Original Details" Command="{Binding Edit_Item}"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="0.5*"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          
+          <TextBlock Text="Suggested Serving" FontSize="24" Grid.ColumnSpan="6" HorizontalAlignment="Center"/>
+
+          <TextBlock Text="Number of Servings" Opacity="0.5" Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Center"/>
+          <TextBox Grid.Row="2" Grid.Column="1" TextInputOptions.ContentType="Number" GotFocus="TextBox_GotFocus" Text="{Binding SuggestedServing}" TextChanged="Suggested_TextChanged" Tag="Scroll" HorizontalContentAlignment="Center"/>
+
+          <TextBlock Text="Calories" Opacity="0.5" Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="1" HorizontalAlignment="Center"/>
+          <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding SuggestedCalories}" FontSize="20" HorizontalAlignment="Center"/>
+        </Grid>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Button Content="Cancel" Grid.Row="2" Command="{Binding Cancel_Click}"/>
+    <Button Content="Delete" Grid.Row="2" Grid.Column="1" Background="#80C00000" Command="{Binding Delete_Click}"/>
+    <Button Content="Save" Grid.Row="2" Grid.Column="2" Background="#8000C000" Command="{Binding Save_Click}"/>
+  </Grid>
+</UserControl>

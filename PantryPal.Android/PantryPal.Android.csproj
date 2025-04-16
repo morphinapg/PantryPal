@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0-android35.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationId>PantryPal.PantryPal</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <AssemblyName>PantryPal</AssemblyName>
+    <!--<ApplicationIcon>Resources\drawable\icon.ico</ApplicationIcon>-->
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Icon.png" />
+    <None Remove="Resources\drawable\icon.ico" />
+    <None Remove="Resources\drawable\SplashIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android" Version="11.2.7" />
+    <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PantryPal\PantryPal.csproj" />
+  </ItemGroup>
+</Project>

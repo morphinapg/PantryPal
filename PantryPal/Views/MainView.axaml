@@ -1,0 +1,193 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PantryPal.ViewModels"
+             xmlns:v="clr-namespace:PantryPal.Views"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="900"
+             x:Class="PantryPal.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <UserControl.DataContext>
+    <vm:MainViewModel/>
+  </UserControl.DataContext>
+  <Design.DataContext>
+    <vm:MainViewModel/>
+  </Design.DataContext>
+
+  <UserControl.Styles>
+    <Style Selector="CheckBox">
+      <Setter Property="Margin" Value="10"/>
+    </Style>
+    <Style Selector="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="Margin" Value="10"/>
+    </Style>
+  </UserControl.Styles>
+  <UserControl Padding="{Binding SafeArea}">
+    <Grid x:Name="AddItemBox" Focusable="True">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <Grid Background="#80808080">
+        <Grid.Styles>
+          <Style Selector="Button">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,10"/>
+          </Style>
+        </Grid.Styles>
+        
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="PantryPal" FontSize="24" FontWeight="Bold" Margin="15"/>
+        <Button Content="Backup" Grid.Column="1" Command="{Binding Backup_Clicked}"/>
+        <Button Content="Restore" Grid.Column="2" Command="{Binding Restore_Clicked}"/>
+      </Grid>
+
+      <Grid Grid.Row="1" IsVisible="{Binding HideList}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Panel Background="#40808080" Grid.ColumnSpan="4"/>
+
+        <CheckBox Content="Foods" IsChecked="{Binding IsFood}"/>
+        <CheckBox Content="Snacks" Grid.Column="1" IsChecked="{Binding IsSnack}"/>
+        <TextBlock Text="Sort:" Grid.Column="2" HorizontalAlignment="Right"/>
+        <ComboBox Grid.Column="3" SelectedIndex="{Binding SortOrder}">
+          <ComboBox.Items>
+            <ComboBoxItem>
+              <TextBlock Text="Default"/>
+            </ComboBoxItem>
+            
+            <ComboBoxItem>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Calories"/>
+                <TextBlock Text="↑" Grid.Column="1"/>
+              </Grid>
+            </ComboBoxItem>
+            <ComboBoxItem>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Calories"/>
+                <TextBlock Text="↓" Grid.Column="1"/>
+              </Grid>
+            </ComboBoxItem>
+            <ComboBoxItem>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Expiration"/>
+                <TextBlock Text="↑" Grid.Column="1"/>
+              </Grid>
+            </ComboBoxItem>
+            <ComboBoxItem>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Expiration"/>
+                <TextBlock Text="↓" Grid.Column="1"/>
+              </Grid>
+            </ComboBoxItem>
+          </ComboBox.Items>
+        </ComboBox>
+      </Grid>
+
+      <Panel Grid.Row="2" Background="#20808080">
+        <Panel.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+          </Style>
+        </Panel.Styles>
+
+        <ListBox IsVisible="{Binding HideList}" ItemsSource="{Binding FilteredFoods}" SelectedItem="{Binding SelectedItem}" SelectionChanged="ListBox_SelectionChanged">
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="vm:FoodItem">
+              <Panel Background="{Binding Color}" Opacity="{Binding Opacity}">
+                <Grid Margin="10">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                  </Grid.RowDefinitions>
+
+                  <TextBlock Text="{Binding Emoji}" FontSize="36" Grid.RowSpan="2" VerticalAlignment="Center"/>
+
+                  <TextBlock Text="{Binding Name}" Grid.Column="1" Grid.ColumnSpan="2" FontSize="24"/>
+                  <TextBlock Text="{Binding Location}" Grid.Row="1" Grid.Column="1" Opacity="0.5"/>
+
+                  <TextBlock Text="{Binding FilteredServings}" Grid.Row="1" Grid.Column="2" Opacity="0.5" Margin="0,0,5,0"/>
+
+                  <TextBlock Text="{Binding FilteredCalories}" Grid.Column="3" FontSize="24" HorizontalAlignment="Right"/>
+                  <TextBlock Text="{Binding ExpirationDate, StringFormat='M/d/yyyy'}" Grid.Row="1" Grid.Column="3" Opacity="0.5"/>
+                </Grid>
+              </Panel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+      </Panel>
+
+      <Grid Grid.Row="3" Background="#40808080" IsVisible="{Binding HideList}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBox x:Name="FilterBox" Loaded="FilterBox_Loaded" Margin="10" Watermark="Filter by Calories" VerticalContentAlignment="Center" FontSize="22" Text="{Binding Filter}"  TextInputOptions.ContentType="Number" TextChanged="TextBox_TextChanged" GotFocus="TextBox_GotFocus">
+          <TextBox.InnerRightContent>
+            <Button Theme="{StaticResource FluentTextBoxButton}"
+                    Command="{Binding Clear_Filter}"
+                    ClipToBounds="True">
+              <PathIcon Data="{StaticResource TextBoxClearButtonData}" Height="10" Width="10"/>
+            </Button>
+          </TextBox.InnerRightContent>
+        </TextBox>
+
+        <Border Grid.Column="1" Margin="15" CornerRadius="10" BoxShadow="5 5 10 0 #80000000" Padding="-1" >
+          <Button Content="+" FontSize="32" FontWeight="Bold" Padding="15,5" CornerRadius="10" Command="{Binding Add_Item}"/>
+        </Border >
+      </Grid>
+
+      <UserControl Content="{Binding AddItemPanel}" IsVisible="{Binding AddItemVisible}" Grid.Row="1" Grid.RowSpan="3" Background="#20808080" />
+      
+      <UserControl Content="{Binding ImportPanel}" IsVisible="{Binding ImportPanelVisible}" Grid.Row="1" Grid.RowSpan="3" Background="#E6000000" />
+    </Grid>
+  </UserControl>  
+  
+</UserControl>
