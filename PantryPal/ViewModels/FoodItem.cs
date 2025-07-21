@@ -499,11 +499,11 @@ namespace PantryPal.ViewModels
 
         public CommandHandler Eat_Suggested => new CommandHandler(EatSuggested);
         void EatSuggested()
-        {            
-            Quantity -= SuggestedServing;
-            
+        {
             if (SuggestedServing >= 0.5)
                 LastTime = DateTime.Now;
+
+            Quantity -= SuggestedServing;   
         }
 
         //Will represent a recommendation score for Default sorting
