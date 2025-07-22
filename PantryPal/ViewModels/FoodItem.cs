@@ -311,7 +311,7 @@ namespace PantryPal.ViewModels
 
                     var MaxRounded = UsePartsPerServing ? Convert.ToInt32(MaxQuantity * PartsPerServing) / PartsPerServing : Convert.ToInt32(MaxQuantity);
 
-                    if (MaxQuantity > MaxRounded && FilteredServings > MaxRounded)
+                    if (MaxQuantity > MaxRounded && FilteredServings >= MaxQuantity)
                     {
                         double?
                             range = MaxQuantity - MaxRounded,
