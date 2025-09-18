@@ -324,6 +324,8 @@ namespace PantryPal.ViewModels
                             servings = MaxRounded;
                     }
 
+                    
+
                     if (UseMaxServings && MaxServings < servings)
                         servings = MaxServings;
 
@@ -342,6 +344,8 @@ namespace PantryPal.ViewModels
                     OnPropertyChanged(nameof(SuggestedServing));
                     OnPropertyChanged(nameof(SuggestedCalories));
                     OnPropertyChanged(nameof(FilteredServings));
+
+                    
 
                     return Convert.ToInt32(calories);
                 }
@@ -500,8 +504,18 @@ namespace PantryPal.ViewModels
         public CommandHandler Eat_Suggested => new CommandHandler(EatSuggested);
         void EatSuggested()
         {
-            if (SuggestedServing >= 0.5)
+            //if (SuggestedServing >= 0.5)
+            //    LastTime = DateTime.Now;
+            if (PartialServings is null)
+                PartialServings = SuggestedServing;
+            else
+                PartialServings += SuggestedServing;
+
+            if (PartialServings >= 0.5)
+            {
                 LastTime = DateTime.Now;
+                PartialServings = null;
+            }
 
             Quantity -= SuggestedServing;   
         }
@@ -517,5 +531,9 @@ namespace PantryPal.ViewModels
         {
             Import_Clicked?.Invoke(this, EventArgs.Empty);
         }
+
+        //Will be used to store partial servings
+        
+        public double? PartialServings;
     }
 }
