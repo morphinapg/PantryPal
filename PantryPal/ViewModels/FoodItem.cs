@@ -434,7 +434,13 @@ namespace PantryPal.ViewModels
 
         void EatOne()
         {
-            LastTime = DateTime.Now;
+            //If more than 1 serving or last eaten within 36 hours, set last eaten to tomorrow
+            //This will prevent the item from being recommended again for the next 2.5 days
+            if (LastTime is not null && (DateTime.Now - LastTime.Value).TotalHours < 36)
+                LastTime = DateTime.Now.AddDays(1);
+            //otherwise set to now to prevent recommendations for 36 hours only
+            else
+                LastTime = DateTime.Now;
 
             Quantity -= 1;
             if (Quantity < 0)
@@ -513,7 +519,13 @@ namespace PantryPal.ViewModels
 
             if (PartialServings >= 0.5)
             {
-                LastTime = DateTime.Now;
+                //If more than 1 serving or last eaten within 36 hours, set last eaten to tomorrow
+                //This will prevent the item from being recommended again for the next 2.5 days
+                if (PartialServings > 1 || (LastTime is not null && (DateTime.Now - LastTime.Value).TotalHours < 36))
+                    LastTime = DateTime.Now.AddDays(1);
+                //otherwise set to now to prevent recommendations for 36 hours only
+                else
+                    LastTime = DateTime.Now;
                 PartialServings = null;
             }
             else
