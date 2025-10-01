@@ -439,6 +439,8 @@ namespace PantryPal.ViewModels
             Quantity -= 1;
             if (Quantity < 0)
                 Quantity = 0;
+
+            PartialServings = null;
         }
 
         async void Delete()
@@ -504,8 +506,6 @@ namespace PantryPal.ViewModels
         public CommandHandler Eat_Suggested => new CommandHandler(EatSuggested);
         void EatSuggested()
         {
-            //if (SuggestedServing >= 0.5)
-            //    LastTime = DateTime.Now;
             if (PartialServings is null)
                 PartialServings = SuggestedServing;
             else
@@ -515,6 +515,11 @@ namespace PantryPal.ViewModels
             {
                 LastTime = DateTime.Now;
                 PartialServings = null;
+            }
+            else
+            {
+                //Set to 1 day ago so that item won't be recommended within the next 12 hours only
+                LastTime = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
             }
 
             Quantity -= SuggestedServing;   
