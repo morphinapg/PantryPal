@@ -265,6 +265,9 @@ namespace PantryPal.ViewModels
             }
         }
 
+        double AmountConsumed;
+        DateTime? LastConsumedTime;
+
         public bool SliderEnabled => UseNumberOfServings || UsePartsPerServing;
 
         public event EventHandler? Add_Clicked;
@@ -434,19 +437,25 @@ namespace PantryPal.ViewModels
 
         void EatOne()
         {
-            //If more than 1 serving or last eaten within 36 hours, set last eaten to tomorrow
-            //This will prevent the item from being recommended again for the next 2.5 days
-            if (LastTime is not null && (DateTime.Now - LastTime.Value).TotalHours < 36)
-                LastTime = DateTime.Now.AddDays(1);
-            //otherwise set to now to prevent recommendations for 36 hours only
-            else
-                LastTime = DateTime.Now;
+            ////If more than 1 serving or last eaten within 36 hours, set last eaten to tomorrow
+            ////This will prevent the item from being recommended again for the next 2.5 days
+            //if (LastTime is not null && (DateTime.Now - LastTime.Value).TotalHours < 36)
+            //    LastTime = DateTime.Now.AddDays(1);
+            ////otherwise set to now to prevent recommendations for 36 hours only
+            //else
+            //    LastTime = DateTime.Now;
+
+            //Quantity -= 1;
+            //if (Quantity < 0)
+            //    Quantity = 0;
+
+            //PartialServings = null;
+
+            RecordConsumption(1.0);
 
             Quantity -= 1;
             if (Quantity < 0)
                 Quantity = 0;
-
-            PartialServings = null;
         }
 
         async void Delete()
@@ -497,6 +506,8 @@ namespace PantryPal.ViewModels
             UseMaxServings = other.UseMaxServings;
             LastTime = other.LastTime;
             GUID = other.GUID;
+            AmountConsumed = other.AmountConsumed;
+            LastConsumedTime = other.LastConsumedTime;
         }
 
         public FoodItem()
@@ -512,29 +523,36 @@ namespace PantryPal.ViewModels
         public CommandHandler Eat_Suggested => new CommandHandler(EatSuggested);
         void EatSuggested()
         {
-            if (PartialServings is null)
-                PartialServings = SuggestedServing;
-            else
-                PartialServings += SuggestedServing;
+            //if (PartialServings is null)
+            //    PartialServings = SuggestedServing;
+            //else
+            //    PartialServings += SuggestedServing;
 
-            if (PartialServings >= 0.5)
-            {
-                //If more than 1 serving or last eaten within 36 hours, set last eaten to tomorrow
-                //This will prevent the item from being recommended again for the next 2.5 days
-                if (PartialServings > 1 || (LastTime is not null && (DateTime.Now - LastTime.Value).TotalHours < 36))
-                    LastTime = DateTime.Now.AddDays(1);
-                //otherwise set to now to prevent recommendations for 36 hours only
-                else
-                    LastTime = DateTime.Now;
-                PartialServings = null;
-            }
-            else
-            {
-                //Set to 1 day ago so that item won't be recommended within the next 12 hours only
-                LastTime = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
-            }
+            //if (PartialServings >= 0.5)
+            //{
+            //    //If more than 1 serving or last eaten within 36 hours, set last eaten to tomorrow
+            //    //This will prevent the item from being recommended again for the next 2.5 days
+            //    if (PartialServings > 1 || (LastTime is not null && (DateTime.Now - LastTime.Value).TotalHours < 36))
+            //        LastTime = DateTime.Now.AddDays(1);
+            //    //otherwise set to now to prevent recommendations for 36 hours only
+            //    else
+            //        LastTime = DateTime.Now;
+            //    PartialServings = null;
+            //}
+            //else
+            //{
+            //    //Set to 1 day ago so that item won't be recommended within the next 12 hours only
+            //    LastTime = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
+            //}
 
-            Quantity -= SuggestedServing;   
+            //Quantity -= SuggestedServing;   
+
+            double amountToEat = SuggestedServing ?? 1.0;
+            RecordConsumption(amountToEat);
+
+            Quantity -= amountToEat;
+            if (Quantity < 0)
+                Quantity = 0;
         }
 
         //Will represent a recommendation score for Default sorting
@@ -551,6 +569,36 @@ namespace PantryPal.ViewModels
 
         //Will be used to store partial servings
         
-        public double? PartialServings;
+        //public double? PartialServings;
+
+        void RecordConsumption(double amountEaten)
+        {
+            if (LastConsumedTime.HasValue && AmountConsumed > 0)
+            {
+                // Calculate days since the food was last eaten
+                double daysElapsed = (DateTime.Now - LastConsumedTime.Value).TotalDays;
+
+                // Apply half-life decay: Half of the amount decays per 1 day (24 hours)
+                AmountConsumed = AmountConsumed * Math.Pow(0.5, daysElapsed);
+            }
+            else
+            {
+                // First time being eaten
+                AmountConsumed = 0;
+            }
+
+            // Add the newly eaten amount
+            AmountConsumed += amountEaten;
+
+            // Store the actual time we consumed this
+            LastConsumedTime = DateTime.Now;
+
+            // Calculate the adjusted LastTime based on the logarithm of the continuous amount
+            if (AmountConsumed > 0)
+            {
+                double offsetHours = 12.0 * Math.Log2(AmountConsumed);
+                LastTime = DateTime.Now.AddHours(offsetHours);
+            }
+        }
     }
 }
