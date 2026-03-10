@@ -476,7 +476,11 @@ namespace PantryPal.ViewModels
             var result = await MessageBoxManager.GetMessageBoxCustom(msgParams).ShowAsync();
 
             if (result == "Eat and Delete")
-                LastTime = DateTime.Now;
+            {
+                //LastTime = DateTime.Now; 
+                double amountToEat = SuggestedServing ?? 1.0;
+                RecordConsumption(amountToEat);
+            }
 
             if (result is not null && result != "Cancel")
                 Delete_Clicked?.Invoke(this, EventArgs.Empty);
@@ -596,7 +600,7 @@ namespace PantryPal.ViewModels
             // Calculate the adjusted LastTime based on the logarithm of the continuous amount
             if (AmountConsumed > 0)
             {
-                double offsetHours = 12.0 * Math.Log2(AmountConsumed);
+                double offsetHours = Math.Min(24.0 * Math.Log2(AmountConsumed), 24);
                 LastTime = DateTime.Now.AddHours(offsetHours);
             }
         }
