@@ -582,8 +582,8 @@ namespace PantryPal.ViewModels
                 // Calculate days since the food was last eaten
                 double daysElapsed = (DateTime.Now - LastConsumedTime.Value).TotalDays;
 
-                // Apply half-life decay: Half of the amount decays per 1 day (24 hours)
-                AmountConsumed = AmountConsumed * Math.Pow(0.5, daysElapsed);
+                // Apply half-life decay: Half of the amount decays every 2 days (48 hours)
+                AmountConsumed = AmountConsumed * Math.Pow(0.5, daysElapsed / 2);
             }
             else
             {
@@ -600,7 +600,7 @@ namespace PantryPal.ViewModels
             // Calculate the adjusted LastTime based on the logarithm of the continuous amount
             if (AmountConsumed > 0)
             {
-                double offsetHours = Math.Min(24.0 * Math.Log2(AmountConsumed), 24);
+                double offsetHours = 24.0 * Math.Log2(AmountConsumed);
                 LastTime = DateTime.Now.AddHours(offsetHours);
             }
         }

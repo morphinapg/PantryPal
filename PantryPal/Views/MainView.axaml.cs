@@ -52,8 +52,8 @@ public partial class MainView : UserControl
         {
             InsetsManager = toplevel.InsetsManager;
             
-            if (InsetsManager is not null)
-                InsetsManager.DisplayEdgeToEdge = true;
+            //if (InsetsManager is not null)
+            //    InsetsManager.DisplayEdgeToEdge = true;
 
             InputPane = toplevel.InputPane;
 
@@ -263,7 +263,7 @@ public partial class MainView : UserControl
         
     }
 
-    private void TextBox_GotFocus(object? sender, Avalonia.Input.GotFocusEventArgs e)
+    private void TextBox_GotFocus(object? sender, Avalonia.Input.FocusChangedEventArgs e)
     {
         if (DataContext is MainViewModel model && model.Filterclearing)
         {

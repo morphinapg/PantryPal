@@ -15,7 +15,7 @@ namespace PantryPal.Views
 
         TextBox? CurrentFocused;
 
-        private async void TextBox_GotFocus(object? sender, Avalonia.Input.GotFocusEventArgs e)
+        private async void TextBox_GotFocus(object? sender, Avalonia.Input.FocusChangedEventArgs e)
         {
             if (sender is TextBox textbox && textbox != CurrentFocused)
             {

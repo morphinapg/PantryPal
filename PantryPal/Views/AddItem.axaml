@@ -239,22 +239,22 @@
         </Panel>        
 
         <TextBlock Text="Standard Serving" Grid.Row="4" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Calories}" Watermark="Calories" Grid.Row="4" Grid.Column="2" GotFocus="Textbox_GotFocus" TextInputOptions.ContentType="Number" TextChanged="TextBox_TextChanged" Tag="Calories"/>
+        <TextBox Text="{Binding Calories}" PlaceholderText="Calories" Grid.Row="4" Grid.Column="2" GotFocus="Textbox_GotFocus" TextInputOptions.ContentType="Number" TextChanged="TextBox_TextChanged" Tag="Calories"/>
         
         <CheckBox Content="Parts Per Serving" Grid.Row="5" Grid.ColumnSpan="2" IsChecked="{Binding UsePartsPerServing}"/>
-        <TextBox Watermark="Parts Per Serving" Grid.Row="5" Grid.Column="2" IsVisible="{Binding UsePartsPerServing}" Text="{Binding PartsPerServing}" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="PartsPerServing"/>
+        <TextBox PlaceholderText="Parts Per Serving" Grid.Row="5" Grid.Column="2" IsVisible="{Binding UsePartsPerServing}" Text="{Binding PartsPerServing}" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="PartsPerServing"/>
         
         <CheckBox Content="Number of Servings" Grid.Row="6" Grid.ColumnSpan="2" IsChecked="{Binding UseNumberOfServings}"/>  
-        <TextBox Grid.Row="6" Grid.Column="2" IsVisible="{Binding UseNumberOfServings}" Text="{Binding MaxQuantity}" Watermark="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="Quantity"/>
+        <TextBox Grid.Row="6" Grid.Column="2" IsVisible="{Binding UseNumberOfServings}" Text="{Binding MaxQuantity}" PlaceholderText="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="Quantity"/>
 
         <CheckBox Content="Minimum Servings / Meal" Grid.Row="7" Grid.ColumnSpan="2" IsChecked="{Binding UseMinServings}"/>
-        <TextBox Grid.Row="7" Grid.Column="2" IsVisible="{Binding UseMinServings}" Text="{Binding MinServings}" Watermark="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="MinServings"/>
+        <TextBox Grid.Row="7" Grid.Column="2" IsVisible="{Binding UseMinServings}" Text="{Binding MinServings}" PlaceholderText="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="MinServings"/>
         
         <CheckBox Content="Maximum Servings / Meal" Grid.Row="8" Grid.ColumnSpan="2" IsChecked="{Binding UseMaxServings}"/>
-        <TextBox Grid.Row="8" Grid.Column="2" IsVisible="{Binding UseMaxServings}" Text="{Binding MaxServings}" Watermark="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="MaxServings"/>
+        <TextBox Grid.Row="8" Grid.Column="2" IsVisible="{Binding UseMaxServings}" Text="{Binding MaxServings}" PlaceholderText="Servings" TextInputOptions.ContentType="Number" GotFocus="Textbox_GotFocus" TextChanged="TextBox_TextChanged" Tag="MaxServings"/>
         
         <TextBlock Text="Location:" Grid.Row="9" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Location}" Grid.Row="9" Grid.Column="2" Watermark="e.g. Pantry/Fridge/Table" GotFocus="Textbox_GotFocus" TextInputOptions.AutoCapitalization="True"  TextInputOptions.ContentType="Name"/>
+        <TextBox Text="{Binding Location}" Grid.Row="9" Grid.Column="2" PlaceholderText="e.g. Pantry/Fridge/Table" GotFocus="Textbox_GotFocus" TextInputOptions.AutoCapitalization="True"  TextInputOptions.ContentType="Name"/>
       </Grid>
     </ScrollViewer>
     

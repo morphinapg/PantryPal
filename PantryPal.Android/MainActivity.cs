@@ -8,6 +8,7 @@ using AndroidX.Core.Content;
 using Avalonia;
 using Avalonia.Android;
 using Java.Security;
+using System;
 using System.Security.Permissions;
 
 namespace PantryPal.Android;
@@ -18,12 +19,21 @@ namespace PantryPal.Android;
     Icon = "@drawable/icon",
     MainLauncher = true,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
-public class MainActivity : AvaloniaMainActivity<App>
+public class MainActivity : AvaloniaMainActivity
 {
 
-    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
+    //protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
+    //{
+    //    return base.CustomizeAppBuilder(builder)
+    //        .WithInterFont();
+    //}
+}
+
+[Application]
+public class AndroidApp : AvaloniaAndroidApplication<App>
+{
+    protected AndroidApp(IntPtr javaReference, JniHandleOwnership transfer)
+       : base(javaReference, transfer)
     {
-        return base.CustomizeAppBuilder(builder)
-            .WithInterFont();
     }
 }

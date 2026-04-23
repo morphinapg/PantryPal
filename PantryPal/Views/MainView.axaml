@@ -169,7 +169,7 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="FilterBox" Loaded="FilterBox_Loaded" Margin="10" Watermark="Filter by Calories" VerticalContentAlignment="Center" FontSize="22" Text="{Binding Filter}"  TextInputOptions.ContentType="Number" TextChanged="TextBox_TextChanged" GotFocus="TextBox_GotFocus">
+        <TextBox x:Name="FilterBox" Loaded="FilterBox_Loaded" Margin="10" PlaceholderText="Filter by Calories" VerticalContentAlignment="Center" FontSize="22" Text="{Binding Filter}"  TextInputOptions.ContentType="Number" TextChanged="TextBox_TextChanged" GotFocus="TextBox_GotFocus">
           <TextBox.InnerRightContent>
             <Button Theme="{StaticResource FluentTextBoxButton}"
                     Command="{Binding Clear_Filter}"
