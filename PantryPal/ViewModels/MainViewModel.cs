@@ -190,10 +190,10 @@ public partial class MainViewModel : ViewModelBase
                 case (int)SortModes.Default:
                     {
                         double? CaloriesAvg = BaseFilter.Average(x => x.FilteredCalories);
-                        double? ExpirationAvg = BaseFilter.Average(x => x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?));
+                        double? ExpirationAvg = BaseFilter.Average(x => x.Urgency.HasValue ? x.Urgency.Value : default(double?));
                         double? LastTimeAvg = BaseFilter.Average(x => x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?));
                         double? CaloriesDev = BaseFilter.Select(x => x.FilteredCalories - CaloriesAvg).Average(x => x * x);
-                        double? ExpirationDev = BaseFilter.Select(x => (x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?)) - ExpirationAvg).Average(x => x * x);
+                        double? ExpirationDev = BaseFilter.Select(x => (x.Urgency.HasValue ? x.Urgency.Value : default(double?)) - ExpirationAvg).Average(x => x * x);
                         double? LastTimeDev = BaseFilter.Select(x => (x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)) - LastTimeAvg).Average(x => x * x);
 
                         if (CaloriesDev is not null)
@@ -219,8 +219,8 @@ public partial class MainViewModel : ViewModelBase
                         if (ExpirationAvg is not null && ExpirationDev is not null)
                         {
                             double
-                                Min = BaseFilter.Where(x => x.ExpirationDate is not null).Min(x => x.ExpirationDate!.Value.Ticks),
-                                Max = BaseFilter.Where(x => x.ExpirationDate is not null).Max(x => x.ExpirationDate!.Value.Ticks),
+                                Min = BaseFilter.Where(x => x.Urgency is not null).Min(x => x.Urgency!.Value),
+                                Max = BaseFilter.Where(x => x.Urgency is not null).Max(x => x.Urgency!.Value),
                                 Bounds = Math.Max(Max - ExpirationAvg.Value, ExpirationAvg.Value - Min);
 
                             MaxBounds = Math.Max(MaxBounds, Bounds / ExpirationDev.Value);
@@ -240,9 +240,9 @@ public partial class MainViewModel : ViewModelBase
                         {
                             double?
                                 CaloriesZ = (x.FilteredCalories - CaloriesAvg) / CaloriesDev,
-                                ExpirationValue = x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?),
+                                ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
                                 LastTimeValue = x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?),
-                                ExpirationZ = (ExpirationAvg - ExpirationValue) / ExpirationDev,
+                                ExpirationZ = (ExpirationValue - ExpirationAvg) / ExpirationDev,
                                 LastTimeZ = (LastTimeAvg - LastTimeValue) / LastTimeDev;
 
                             if (CaloriesZ is not null && double.IsNaN(CaloriesZ.Value))
@@ -265,8 +265,8 @@ public partial class MainViewModel : ViewModelBase
                         });
 
                         _filteredFoods.Clear();
-                        //var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.Score);
-                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.Score);
+                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.Score);
+                        //var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.Score);
                         foreach (var item in NewList)
                             _filteredFoods.Add(item);
 

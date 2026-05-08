@@ -123,6 +123,25 @@ namespace PantryPal.ViewModels
             }
         }
 
+        public double? Urgency
+        {
+            get
+            {
+                if (Quantity is null || ExpirationDate is null)
+                {
+                    return null;
+                }
+                else
+                {
+                    double
+                        daysleft = (ExpirationDate.Value - DateTime.Now).TotalDays,
+                        modifier = Math.Sqrt(Quantity.Value);
+
+                    return modifier * Math.Exp(-daysleft / 7);
+                }
+            }
+        }
+
         public DateTime StartingDate => DateTime.Now;
 
         bool _isSnack;
