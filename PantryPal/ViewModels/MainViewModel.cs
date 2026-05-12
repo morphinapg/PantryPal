@@ -235,7 +235,10 @@ public partial class MainViewModel : ViewModelBase
                         CombinedDev = Combined.Select(x => x - CombinedAvg).Average(x => x * x);
 
                         if (CombinedDev is not null)
-                            CombinedDev = Math.Sqrt(CombinedDev.Value);                        
+                            CombinedDev = Math.Sqrt(CombinedDev.Value);
+                        
+                        if (CombinedDev == 0)
+                            CombinedAvg = null; //If there is no deviation, then setting the average to null will make it so the combined score isn't used, to avoid dividing by zero
 
                         double MaxBounds = 1;
                         if (CaloriesAvg is not null && CaloriesDev is not null)
@@ -554,6 +557,8 @@ public partial class MainViewModel : ViewModelBase
                 UseMaxServings = CurrentItem.UseMaxServings,
                 LastTime = CurrentItem.LastTime,
                 GUID = CurrentItem.GUID,
+                AmountConsumed = CurrentItem.AmountConsumed,
+                LastConsumedTime = CurrentItem.LastConsumedTime
             };
             BackupFoods.Add(BackupFood);
 
