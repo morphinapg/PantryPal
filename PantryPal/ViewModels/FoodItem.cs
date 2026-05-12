@@ -142,6 +142,8 @@ namespace PantryPal.ViewModels
             }
         }
 
+        public double? DecayedAmount => LastConsumedTime is null ? null : AmountConsumed * Math.Pow(0.5, (DateTime.Now - LastConsumedTime.Value).TotalDays / 2);
+
         public DateTime StartingDate => DateTime.Now;
 
         bool _isSnack;
@@ -284,8 +286,8 @@ namespace PantryPal.ViewModels
             }
         }
 
-        double AmountConsumed;
-        DateTime? LastConsumedTime;
+        public double AmountConsumed;
+        public DateTime? LastConsumedTime;
 
         public bool SliderEnabled => UseNumberOfServings || UsePartsPerServing;
 
