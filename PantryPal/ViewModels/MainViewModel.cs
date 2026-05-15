@@ -287,7 +287,7 @@ public partial class MainViewModel : ViewModelBase
                                 CaloriesZ = (x.FilteredCalories - CaloriesAvg) / CaloriesDev,
                                 ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
                                 ExpirationZ = (ExpirationValue - ExpirationAvg) / ExpirationDev,
-                                LastTimeZ = UseCombined ? CombinedScores[x] : LastTimeScores[x];
+                                LastTimeZ = UseCombined && CombinedScores[x] is not null ? CombinedScores[x] / CombinedDev : LastTimeScores[x];
 
                             if (CaloriesZ is not null && double.IsNaN(CaloriesZ.Value))
                                 CaloriesZ = 0;

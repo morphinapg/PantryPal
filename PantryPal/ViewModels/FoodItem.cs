@@ -279,7 +279,7 @@ namespace PantryPal.ViewModels
         {
             get
             {
-                if (LastTime is null || (DateTime.Now - LastTime.Value).TotalHours > 36)
+                if (LastTime is null || (DateTime.Now - LastTime.Value).TotalHours > 36 || LastConsumedTime is not null)
                     return 1;
 
                 return 0.5;
