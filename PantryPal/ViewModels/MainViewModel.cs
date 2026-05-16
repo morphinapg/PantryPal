@@ -189,16 +189,19 @@ public partial class MainViewModel : ViewModelBase
             {
                 case (int)SortModes.Default:
                     {
-                        double? 
+
+
+
+                        double?
                             CaloriesAvg = BaseFilter.Average(x => x.FilteredCalories),
                             ExpirationAvg = BaseFilter.Average(x => x.Urgency.HasValue ? x.Urgency.Value : default(double?)),
                             LastTimeAvg = BaseFilter.Average(x => x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)),
-                            DecayedAvg = BaseFilter.Average(x => x.DecayedAmount),
 
                             CaloriesDev = BaseFilter.Select(x => x.FilteredCalories - CaloriesAvg).Average(x => x * x),
                             ExpirationDev = BaseFilter.Select(x => (x.Urgency.HasValue ? x.Urgency.Value : default(double?)) - ExpirationAvg).Average(x => x * x),
-                            LastTimeDev = BaseFilter.Select(x => (x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)) - LastTimeAvg).Average(x => x * x),
-                            DecayedDev = BaseFilter.Select(x => x.DecayedAmount - DecayedAvg).Average(x => x * x);
+                            LastTimeDev = BaseFilter.Select(x => (x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)) - LastTimeAvg).Average(x => x * x);
+
+
 
                         if (CaloriesDev is not null)
                             CaloriesDev = Math.Sqrt(CaloriesDev.Value);
@@ -209,36 +212,6 @@ public partial class MainViewModel : ViewModelBase
                         if (LastTimeDev is not null)
                             LastTimeDev = Math.Sqrt(LastTimeDev.Value);
 
-                        if (DecayedDev is not null)
-                            DecayedDev = Math.Sqrt(DecayedDev.Value);
-
-                        double? CombinedAvg = null, CombinedDev = null;
-                        Dictionary<FoodItem, double?> CombinedScores = new(), LastTimeScores = new();
-
-                        var Combined = BaseFilter.Select(x =>
-                        {
-                            var LastTimeValue = x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?);
-                            var DecayedValue = x.DecayedAmount;
-
-                            var LastTimeZ = (LastTimeAvg - LastTimeValue) / LastTimeDev;
-                            var DecayedZ = (DecayedAvg - DecayedValue) / DecayedDev;
-
-                            var Combined = LastTimeZ + DecayedZ;
-
-                            LastTimeScores[x] = LastTimeZ;
-                            CombinedScores[x] = Combined;
-
-                            return Combined;
-                        }).ToList();
-
-                        CombinedAvg = Combined.Average();
-                        CombinedDev = Combined.Select(x => x - CombinedAvg).Average(x => x * x);
-
-                        if (CombinedDev is not null)
-                            CombinedDev = Math.Sqrt(CombinedDev.Value);
-                        
-                        if (CombinedDev == 0)
-                            CombinedAvg = null; //If there is no deviation, then setting the average to null will make it so the combined score isn't used, to avoid dividing by zero
 
                         double MaxBounds = 1;
                         if (CaloriesAvg is not null && CaloriesDev is not null)
@@ -261,15 +234,7 @@ public partial class MainViewModel : ViewModelBase
                             MaxBounds = Math.Max(MaxBounds, Bounds / ExpirationDev.Value);
                         }
 
-                        if (CombinedAvg is not null && CombinedDev is not null)
-                        {
-                            double
-                                Min = CombinedScores.Where(x => x.Value is not null).Min(x => x.Value!.Value),
-                                Max = CombinedScores.Where(x => x.Value is not null).Max(x => x.Value!.Value),
-                                Bounds = Math.Max(Max - CombinedAvg.Value, CombinedAvg.Value - Min);
-                            MaxBounds = Math.Max(MaxBounds, Bounds / CombinedDev.Value);
-                        }
-                        else if (LastTimeAvg is not null && LastTimeDev is not null)
+                        if (LastTimeAvg is not null && LastTimeDev is not null)
                         {
                             double
                                 Min = BaseFilter.Where(x => x.LastTime is not null).Min(x => x.LastTime!.Value.Ticks),
@@ -279,15 +244,13 @@ public partial class MainViewModel : ViewModelBase
                             MaxBounds = Math.Max(MaxBounds, Bounds / LastTimeDev.Value);
                         }
 
-                        bool UseCombined = CombinedAvg is not null && CombinedDev is not null;
-
                         Parallel.ForEach(BaseFilter, x =>
                         {
                             double?
                                 CaloriesZ = (x.FilteredCalories - CaloriesAvg) / CaloriesDev,
                                 ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
                                 ExpirationZ = (ExpirationValue - ExpirationAvg) / ExpirationDev,
-                                LastTimeZ = UseCombined && CombinedScores[x] is not null ? CombinedScores[x] / CombinedDev : LastTimeScores[x];
+                                LastTimeZ = x.LastTime.HasValue ? (LastTimeAvg - x.LastTime.Value.Ticks) / LastTimeDev : null;
 
                             if (CaloriesZ is not null && double.IsNaN(CaloriesZ.Value))
                                 CaloriesZ = 0;
@@ -302,8 +265,8 @@ public partial class MainViewModel : ViewModelBase
                                 LastTimeZ = MaxBounds;
 
                             x.Score = ExpirationZ is not null ? 
-                                CaloriesZ * 0.5 + ExpirationZ * 0.3 + LastTimeZ * 0.2 : 
-                                CaloriesZ * 0.6 + LastTimeZ * 0.4;                            
+                                (CaloriesZ + ExpirationZ + LastTimeZ) / 3 : 
+                                (CaloriesZ + LastTimeZ) / 2;                            
                         });
 
                         _filteredFoods.Clear();

@@ -142,7 +142,7 @@ namespace PantryPal.ViewModels
             }
         }
 
-        public double? DecayedAmount => LastConsumedTime is null ? null : AmountConsumed * Math.Pow(0.5, (DateTime.Now - LastConsumedTime.Value).TotalDays / 2);
+        public double? DecayedAmount => LastConsumedTime is null ? (LastTime is not null ? Math.Pow(0.5, (DateTime.Now - LastTime.Value).TotalDays / 2) : null) : AmountConsumed * Math.Pow(0.5, (DateTime.Now - LastConsumedTime.Value).TotalDays / 2);
 
         public DateTime StartingDate => DateTime.Now;
 
@@ -279,7 +279,7 @@ namespace PantryPal.ViewModels
         {
             get
             {
-                if (LastTime is null || (DateTime.Now - LastTime.Value).TotalHours > 36 || LastConsumedTime is not null)
+                if (LastTime is null || (DateTime.Now - LastTime.Value).TotalHours > 36 )
                     return 1;
 
                 return 0.5;
@@ -598,13 +598,9 @@ namespace PantryPal.ViewModels
 
         void RecordConsumption(double amountEaten)
         {
-            if (LastConsumedTime.HasValue && AmountConsumed > 0)
+            if (DecayedAmount is not null)
             {
-                // Calculate days since the food was last eaten
-                double daysElapsed = (DateTime.Now - LastConsumedTime.Value).TotalDays;
-
-                // Apply half-life decay: Half of the amount decays every 2 days (48 hours)
-                AmountConsumed = AmountConsumed * Math.Pow(0.5, daysElapsed / 2);
+                AmountConsumed = DecayedAmount.Value;
             }
             else
             {
@@ -624,6 +620,11 @@ namespace PantryPal.ViewModels
                 double offsetHours = 24.0 * Math.Log2(AmountConsumed);
                 LastTime = DateTime.Now.AddHours(offsetHours);
             }
+        }
+
+        public override string ToString()
+        {
+            return Name is null ? "null" : Name;
         }
     }
 }
