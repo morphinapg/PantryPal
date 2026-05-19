@@ -185,150 +185,189 @@ public partial class MainViewModel : ViewModelBase
 
             //BaseFilter = BaseFilter.OrderByDescending(x => x.Opacity).ThenBy(x => x.ExpireSort);
 
-            switch (SortOrder)
+            try
             {
-                case (int)SortModes.Default:
-                    {
-
-
-
-                        double?
-                            CaloriesAvg = BaseFilter.Average(x => x.FilteredCalories),
-                            ExpirationAvg = BaseFilter.Average(x => x.Urgency.HasValue ? x.Urgency.Value : default(double?)),
-                            LastTimeAvg = BaseFilter.Average(x => x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)),
-
-                            CaloriesDev = BaseFilter.Select(x => x.FilteredCalories - CaloriesAvg).Average(x => x * x),
-                            ExpirationDev = BaseFilter.Select(x => (x.Urgency.HasValue ? x.Urgency.Value : default(double?)) - ExpirationAvg).Average(x => x * x),
-                            LastTimeDev = BaseFilter.Select(x => (x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)) - LastTimeAvg).Average(x => x * x);
-
-
-
-                        if (CaloriesDev is not null)
-                            CaloriesDev = Math.Sqrt(CaloriesDev.Value);
-
-                        if (ExpirationDev is not null)
-                            ExpirationDev = Math.Sqrt(ExpirationDev.Value);
-
-                        if (LastTimeDev is not null)
-                            LastTimeDev = Math.Sqrt(LastTimeDev.Value);
-
-
-                        double MaxBounds = 1;
-                        if (CaloriesAvg is not null && CaloriesDev is not null)
-                        {
-                            double
-                                Min = BaseFilter.Where(x => x.FilteredCalories is not null).Min(x => x.FilteredCalories!.Value),
-                                Max = BaseFilter.Where(x => x.FilteredCalories is not null).Max(x => x.FilteredCalories!.Value),
-                                Bounds = Math.Max(Max - CaloriesAvg.Value, CaloriesAvg.Value - Min);
-
-                            MaxBounds = Bounds / CaloriesDev.Value;
-                        }
-
-                        if (ExpirationAvg is not null && ExpirationDev is not null)
-                        {
-                            double
-                                Min = BaseFilter.Where(x => x.Urgency is not null).Min(x => x.Urgency!.Value),
-                                Max = BaseFilter.Where(x => x.Urgency is not null).Max(x => x.Urgency!.Value),
-                                Bounds = Math.Max(Max - ExpirationAvg.Value, ExpirationAvg.Value - Min);
-
-                            MaxBounds = Math.Max(MaxBounds, Bounds / ExpirationDev.Value);
-                        }
-
-                        if (LastTimeAvg is not null && LastTimeDev is not null)
-                        {
-                            double
-                                Min = BaseFilter.Where(x => x.LastTime is not null).Min(x => x.LastTime!.Value.Ticks),
-                                Max = BaseFilter.Where(x => x.LastTime is not null).Max(x => x.LastTime!.Value.Ticks),
-                                Bounds = Math.Max(Max - LastTimeAvg.Value, LastTimeAvg.Value - Min);
-
-                            MaxBounds = Math.Max(MaxBounds, Bounds / LastTimeDev.Value);
-                        }
-
-                        Parallel.ForEach(BaseFilter, x =>
+                switch (SortOrder)
+                {
+                    case (int)SortModes.Default:
                         {
                             double?
-                                CaloriesZ = (x.FilteredCalories - CaloriesAvg) / CaloriesDev,
-                                ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
-                                ExpirationZ = (ExpirationValue - ExpirationAvg) / ExpirationDev,
-                                LastTimeZ = x.LastTime.HasValue ? (LastTimeAvg - x.LastTime.Value.Ticks) / LastTimeDev : null;
+                                CaloriesAvg = BaseFilter.Average(x => x.FilteredCalories),
+                                ExpirationAvg = BaseFilter.Average(x => x.Urgency.HasValue ? x.Urgency.Value : default(double?)),
+                                LastTimeAvg = BaseFilter.Average(x => x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)),
 
-                            if (CaloriesZ is not null && double.IsNaN(CaloriesZ.Value))
-                                CaloriesZ = 0;
+                                CaloriesDev = BaseFilter.Select(x => x.FilteredCalories - CaloriesAvg).Average(x => x * x),
+                                ExpirationDev = BaseFilter.Select(x => (x.Urgency.HasValue ? x.Urgency.Value : default(double?)) - ExpirationAvg).Average(x => x * x),
+                                LastTimeDev = BaseFilter.Select(x => (x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)) - LastTimeAvg).Average(x => x * x);
 
-                            if (ExpirationZ is not null && double.IsNaN(ExpirationZ.Value))
-                                ExpirationZ = 0;
 
-                            if (LastTimeZ is not null && double.IsNaN(LastTimeZ.Value))
-                                LastTimeZ = 0;
+                            if (CaloriesDev is not null)
+                                CaloriesDev = Math.Sqrt(CaloriesDev.Value);
 
-                            if (LastTimeZ is null)
-                                LastTimeZ = MaxBounds;
+                            if (ExpirationDev is not null)
+                                ExpirationDev = Math.Sqrt(ExpirationDev.Value);
 
-                            x.Score = ExpirationZ is not null ? 
-                                (CaloriesZ + ExpirationZ + LastTimeZ) / 3 : 
-                                (CaloriesZ + LastTimeZ) / 2;                            
-                        });
+                            if (LastTimeDev is not null)
+                                LastTimeDev = Math.Sqrt(LastTimeDev.Value);
 
-                        _filteredFoods.Clear();
-                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.Score);
-                        //var NewList = BaseFilter.OrderByDescending(x => x.Score);
-                        //var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.Score);
-                        foreach (var item in NewList)
-                            _filteredFoods.Add(item);
+                            Dictionary<FoodItem, double?>
+                                LastTimeScores = new(),
+                                CombinedScores = new();
 
-                        break;
-                    }                    
-                case (int)SortModes.CaloriesDescending:
-                    {
-                        _filteredFoods.Clear();
-                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.FilteredCalories).ThenBy(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate);
-                        foreach (var item in NewList)
-                        {
-                            _filteredFoods.Add(item);
+                            var Combined = BaseFilter.Select(x =>
+                            {
+                                double?
+                                    ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
+                                    LastTimeValue = x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?),
+                                    ExpirationZ = (ExpirationAvg - ExpirationValue) / ExpirationDev,
+                                    LastTimeZ = (LastTimeAvg - LastTimeValue) / LastTimeDev,
+                                    Combined = ExpirationZ + LastTimeZ;
+
+                                LastTimeScores[x] = LastTimeZ;
+                                CombinedScores[x] = Combined;
+
+                                return Combined;
+                            }).ToList();
+
+                            double? CombinedDev = Combined.Average(x => x * x);
+
+                            if (CombinedDev is not null)
+                                CombinedDev = Math.Sqrt(CombinedDev.Value);
+
+
+                            double MaxBounds = 1;
+                            if (CaloriesAvg is not null && CaloriesDev is not null)
+                            {
+                                double
+                                    Min = BaseFilter.Where(x => x.FilteredCalories is not null).Min(x => x.FilteredCalories!.Value),
+                                    Max = BaseFilter.Where(x => x.FilteredCalories is not null).Max(x => x.FilteredCalories!.Value),
+                                    Bounds = Math.Max(Max - CaloriesAvg.Value, CaloriesAvg.Value - Min);
+
+                                MaxBounds = Bounds / CaloriesDev.Value;
+                            }
+
+                            if (ExpirationAvg is not null && ExpirationDev is not null)
+                            {
+                                double
+                                    Min = BaseFilter.Where(x => x.Urgency is not null).Min(x => x.Urgency!.Value),
+                                    Max = BaseFilter.Where(x => x.Urgency is not null).Max(x => x.Urgency!.Value),
+                                    Bounds = Math.Max(Max - ExpirationAvg.Value, ExpirationAvg.Value - Min);
+
+                                MaxBounds = Math.Max(MaxBounds, Bounds / ExpirationDev.Value);
+                            }
+
+                            if (LastTimeAvg is not null && LastTimeDev is not null)
+                            {
+                                double
+                                    Min = BaseFilter.Where(x => x.LastTime is not null).Min(x => x.LastTime!.Value.Ticks),
+                                    Max = BaseFilter.Where(x => x.LastTime is not null).Max(x => x.LastTime!.Value.Ticks),
+                                    Bounds = Math.Max(Max - LastTimeAvg.Value, LastTimeAvg.Value - Min);
+
+                                MaxBounds = Math.Max(MaxBounds, Bounds / LastTimeDev.Value);
+                            }
+
+                            if (CombinedDev is not null)
+                            {
+                                double
+                                    Min = Combined.Where(x => x is not null).Min(x => x!.Value),
+                                    Max = Combined.Where(x => x is not null).Max(x => x!.Value),
+                                    Bounds = Math.Max(Math.Abs(Min), Math.Abs(Max));
+
+                                MaxBounds = Math.Max(MaxBounds, Bounds / CombinedDev.Value);
+                            }
+
+                            Parallel.ForEach(BaseFilter, x =>
+                            {
+                                double?
+                                    CaloriesZ = (x.FilteredCalories - CaloriesAvg) / CaloriesDev,
+                                    //ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
+                                    //ExpirationZ = (ExpirationValue - ExpirationAvg) / ExpirationDev,
+                                    CravingZ = CombinedDev is not null && CombinedScores[x] is not null ? CombinedScores[x] / CombinedDev : LastTimeScores[x];
+
+                                if (CaloriesZ is not null && double.IsNaN(CaloriesZ.Value))
+                                    CaloriesZ = 0;
+
+                                //if (ExpirationZ is not null && double.IsNaN(ExpirationZ.Value))
+                                //    ExpirationZ = 0;
+
+                                if (CravingZ is not null && double.IsNaN(CravingZ.Value))
+                                    CravingZ = 0;
+
+                                if (CravingZ is null)
+                                    CravingZ = MaxBounds;
+
+                                //x.Score = ExpirationZ is not null ?
+                                //    CaloriesZ * 0.5 + ExpirationZ * 0.25 + Craving * 0.25 :
+                                //    CaloriesZ * 0.5 + Craving * 0.5;
+
+                                x.Score = CaloriesZ + CravingZ;
+                            });
+
+                            _filteredFoods.Clear();
+                            var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.Score);
+                            //var NewList = BaseFilter.OrderByDescending(x => x.Score);
+                            //var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.Score);
+                            foreach (var item in NewList)
+                                _filteredFoods.Add(item);
+
+                            break;
                         }
-                        break;
-                    }
-                case (int)SortModes.CaloriesAscending:
-                    {
-                        _filteredFoods.Clear();
-                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenBy(x => x.FilteredCalories).ThenBy(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate);
-                        foreach (var item in NewList)
+                    case (int)SortModes.CaloriesDescending:
                         {
-                            _filteredFoods.Add(item);
+                            _filteredFoods.Clear();
+                            var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.FilteredCalories).ThenBy(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate);
+                            foreach (var item in NewList)
+                            {
+                                _filteredFoods.Add(item);
+                            }
+                            break;
                         }
-                        break;
-                    }
-                case (int)SortModes.ExpirationDescending:
-                    {
-                        _filteredFoods.Clear();
-                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate).ThenByDescending(x => x.FilteredCalories);
-                        foreach (var item in NewList)
+                    case (int)SortModes.CaloriesAscending:
                         {
-                            _filteredFoods.Add(item);
+                            _filteredFoods.Clear();
+                            var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenBy(x => x.FilteredCalories).ThenBy(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate);
+                            foreach (var item in NewList)
+                            {
+                                _filteredFoods.Add(item);
+                            }
+                            break;
                         }
-                        break;
-                    }
-                case (int)SortModes.ExpirationAscending:
-                    {
-                        _filteredFoods.Clear();
-                        var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenBy(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate).ThenByDescending(x => x.FilteredCalories);
-                        foreach (var item in NewList)
+                    case (int)SortModes.ExpirationDescending:
                         {
-                            _filteredFoods.Add(item);
+                            _filteredFoods.Clear();
+                            var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenByDescending(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate).ThenByDescending(x => x.FilteredCalories);
+                            foreach (var item in NewList)
+                            {
+                                _filteredFoods.Add(item);
+                            }
+                            break;
                         }
-                        break;
-                    }
-                default:
-                    {
-                        _filteredFoods.Clear();
-                        var NewList = BaseFilter;
-                        foreach (var item in NewList)
+                    case (int)SortModes.ExpirationAscending:
                         {
-                            _filteredFoods.Add(item);
+                            _filteredFoods.Clear();
+                            var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.ExpireSort).ThenBy(x => x.ExpirationDate is null ? DateTime.MaxValue : x.ExpirationDate).ThenByDescending(x => x.FilteredCalories);
+                            foreach (var item in NewList)
+                            {
+                                _filteredFoods.Add(item);
+                            }
+                            break;
                         }
-                        break;
-                    }
+                    default:
+                        {
+                            _filteredFoods.Clear();
+                            var NewList = BaseFilter;
+                            foreach (var item in NewList)
+                            {
+                                _filteredFoods.Add(item);
+                            }
+                            break;
+                        }
+                }
             }
+            catch (Exception ex) 
+            {
+
+            }            
 
             return _filteredFoods;
         }
