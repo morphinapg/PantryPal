@@ -219,7 +219,7 @@ public partial class MainViewModel : ViewModelBase
                                 double?
                                     ExpirationValue = x.Urgency.HasValue ? x.Urgency.Value : default(double?),
                                     LastTimeValue = x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?),
-                                    ExpirationZ = (ExpirationAvg - ExpirationValue) / ExpirationDev,
+                                    ExpirationZ = (ExpirationValue - ExpirationAvg) / ExpirationDev,
                                     LastTimeZ = (LastTimeAvg - LastTimeValue) / LastTimeDev,
                                     Combined = ExpirationZ + LastTimeZ;
 
