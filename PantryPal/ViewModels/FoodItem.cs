@@ -137,7 +137,7 @@ namespace PantryPal.ViewModels
                         daysleft = (ExpirationDate.Value - DateTime.Now).TotalDays,
                         modifier = Math.Sqrt(Quantity.Value);
 
-                    return modifier * Math.Exp(-daysleft / 7);
+                    return modifier * Math.Pow(0.5, daysleft / 7);
                 }
             }
         }
