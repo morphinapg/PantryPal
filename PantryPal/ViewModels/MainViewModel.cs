@@ -261,8 +261,8 @@ public partial class MainViewModel : ViewModelBase
                             if (CaloriesAvg is not null && CaloriesDev is not null)
                             {
                                 double
-                                    Min = BaseFilter.Where(x => x.FilteredCalories is not null).Min(x => x.FilteredCalories!.Value),
-                                    Max = BaseFilter.Where(x => x.FilteredCalories is not null).Max(x => x.FilteredCalories!.Value),
+                                    Min = AllFoods.Where(x => x.FilteredCalories is not null).Min(x => x.FilteredCalories!.Value),
+                                    Max = AllFoods.Where(x => x.FilteredCalories is not null).Max(x => x.FilteredCalories!.Value),
                                     Bounds = Math.Max(Max - CaloriesAvg.Value, CaloriesAvg.Value - Min);
 
                                 MaxBounds = Bounds / CaloriesDev.Value;
@@ -271,8 +271,8 @@ public partial class MainViewModel : ViewModelBase
                             if (ExpirationAvg is not null && ExpirationDev is not null)
                             {
                                 double
-                                    Min = BaseFilter.Where(x => x.ExpirationDate is not null).Min(x => x.ExpirationDate!.Value.Ticks),
-                                    Max = BaseFilter.Where(x => x.ExpirationDate is not null).Max(x => x.ExpirationDate!.Value.Ticks),
+                                    Min = AllFoods.Where(x => x.ExpirationDate is not null).Min(x => x.ExpirationDate!.Value.Ticks),
+                                    Max = AllFoods.Where(x => x.ExpirationDate is not null).Max(x => x.ExpirationDate!.Value.Ticks),
                                     Bounds = Math.Max(Max - ExpirationAvg.Value, ExpirationAvg.Value - Min);
 
                                 MaxBounds = Math.Max(MaxBounds, Bounds / ExpirationDev.Value);
@@ -281,8 +281,8 @@ public partial class MainViewModel : ViewModelBase
                             if (LastTimeAvg is not null && LastTimeDev is not null)
                             {
                                 double
-                                    Min = BaseFilter.Where(x => x.LastTime is not null).Min(x => x.LastTime!.Value.Ticks),
-                                    Max = BaseFilter.Where(x => x.LastTime is not null).Max(x => x.LastTime!.Value.Ticks),
+                                    Min = AllFoods.Where(x => x.LastTime is not null).Min(x => x.LastTime!.Value.Ticks),
+                                    Max = AllFoods.Where(x => x.LastTime is not null).Max(x => x.LastTime!.Value.Ticks),
                                     Bounds = Math.Max(Max - LastTimeAvg.Value, LastTimeAvg.Value - Min);
 
                                 MaxBounds = Math.Max(MaxBounds, Bounds / LastTimeDev.Value);
@@ -312,6 +312,7 @@ public partial class MainViewModel : ViewModelBase
 
                                 if (CravingZ is null)
                                     CravingZ = MaxBounds;
+
 
                                 x.Score = CaloriesZ + CravingZ;
                             }
