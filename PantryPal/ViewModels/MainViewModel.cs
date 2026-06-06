@@ -191,14 +191,29 @@ public partial class MainViewModel : ViewModelBase
                 {
                     case (int)SortModes.Default:
                         {
+                            Dictionary<FoodItem, double?>
+                                LastTimeScores = new(),
+                                ExpirationScores = new(),
+                                CombinedScores = new();
+
                             double?
                                 CaloriesAvg = AllFoods.Average(x => x.FilteredCalories),
-                                ExpirationAvg = AllFoods.Average(x => x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?)),
-                                LastTimeAvg = AllFoods.Average(x => x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)),
+                                ExpirationAvg = AllFoods.Average(x =>
+                                {
+                                    var value = x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?);
+                                    ExpirationScores[x] = value;
+                                    return value;
+                                }),
+                                LastTimeAvg = AllFoods.Average(x =>
+                                {
+                                    var value = x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?);
+                                    LastTimeScores[x] = value;
+                                    return value;
+                                }),
 
                                 CaloriesDev = AllFoods.Select(x => x.FilteredCalories - CaloriesAvg).Average(x => x * x),
-                                ExpirationDev = AllFoods.Select(x => (x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?)) - ExpirationAvg).Average(x => x * x),
-                                LastTimeDev = AllFoods.Select(x => (x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?)) - LastTimeAvg).Average(x => x * x);
+                                ExpirationDev = AllFoods.Select(x => ExpirationScores[x] - ExpirationAvg).Average(x => x * x),
+                                LastTimeDev = AllFoods.Select(x => LastTimeScores[x] - LastTimeAvg).Average(x => x * x);
 
 
                             if (CaloriesDev is not null)
@@ -208,25 +223,21 @@ public partial class MainViewModel : ViewModelBase
                                 ExpirationDev = Math.Sqrt(ExpirationDev.Value);
 
                             if (LastTimeDev is not null)
-                                LastTimeDev = Math.Sqrt(LastTimeDev.Value);
-
-                            Dictionary<FoodItem, double?>
-                                LastTimeScores = new(),
-                                CombinedScores = new();
+                                LastTimeDev = Math.Sqrt(LastTimeDev.Value);                            
 
                             var Combined = AllFoods.Select(x =>
                             {
                                 double?
-                                    ExpirationValue = x.ExpirationDate.HasValue ? x.ExpirationDate.Value.Ticks : default(double?),
-                                    LastTimeValue = x.LastTime.HasValue ? x.LastTime.Value.Ticks : default(double?),
+                                    ExpirationValue = ExpirationScores[x],
+                                    LastTimeValue = LastTimeScores[x],
                                     ExpirationZ = (ExpirationAvg - ExpirationValue) / ExpirationDev,
                                     LastTimeZ = (LastTimeAvg - LastTimeValue) / LastTimeDev,
-                                    ExpirationWeight = 1 + (x.Urgency.HasValue ? x.Urgency.Value : 0),
-                                    LastTimeWeight = 1 / ExpirationWeight,
+                                    ExpirationWeight = 1 + (x.Urgency ?? 0),
+                                    LastTimeWeight = (1 + (x.DecayedAmount ?? 0)) / ExpirationWeight,
                                     WeightTotal = ExpirationWeight + LastTimeWeight,
                                     Combined = (ExpirationZ * ExpirationWeight + LastTimeZ * LastTimeWeight) / WeightTotal;
 
-
+                                ExpirationScores[x] = ExpirationZ;
                                 LastTimeScores[x] = LastTimeZ;
                                 CombinedScores[x] = Combined;
 
@@ -287,7 +298,7 @@ public partial class MainViewModel : ViewModelBase
                                 MaxBounds = Math.Max(MaxBounds, Bounds / CombinedDev.Value);
                             }
 
-                            Parallel.ForEach(AllFoods, x =>
+                            foreach (var x in AllFoods)
                             {
                                 double?
                                     CaloriesZ = (x.FilteredCalories - CaloriesAvg) / CaloriesDev,
@@ -303,10 +314,10 @@ public partial class MainViewModel : ViewModelBase
                                     CravingZ = MaxBounds;
 
                                 x.Score = CaloriesZ + CravingZ;
-                            });
+                            }
 
                             _filteredFoods.Clear();
-                            var NewList = BaseFilter.OrderByDescending(x => x.Opacity).ThenByDescending(x => x.Score);
+                            var NewList = BaseFilter.OrderByDescending(x => x.Score);
                             foreach (var item in NewList)
                                 _filteredFoods.Add(item);
 

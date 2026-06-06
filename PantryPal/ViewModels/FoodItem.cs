@@ -279,10 +279,23 @@ namespace PantryPal.ViewModels
         {
             get
             {
-                if (LastTime is null || (DateTime.Now - LastTime.Value).TotalHours > 36 )
-                    return 1;
+                //if (LastTime is null || (DateTime.Now - LastTime.Value).TotalHours > 36 )
+                //    return 1;
 
-                return 0.5;
+                //return 0.5;
+
+                // Items with a decayed amount of 1 or more will have an opacity of 0.5, while items with a decayed amount of 0 will have an opacity of 1. The opacity decreases linearly as the decayed amount increases from 0 to 1.
+
+                if (DecayedAmount is null || DecayedAmount <= 0)
+                    return 1.0;
+
+                if (DecayedAmount >= 1.0)
+                    return 0.5;
+
+                // Linearly scale from 1.0 (at 0 decayed) down to 0.5 (at 1 decayed)
+                return 1.0 - (DecayedAmount.Value * 0.5);
+
+
             }
         }
 
