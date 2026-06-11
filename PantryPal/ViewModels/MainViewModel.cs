@@ -407,7 +407,8 @@ public partial class MainViewModel : ViewModelBase
 
     private void CurrentItem_Import_Clicked(object? sender, EventArgs e)
     {
-        ImportPanelVisible= true;
+        SortBackup();
+        ImportPanelVisible = true;
     }
 
     public void CurrentItem_Cancel_Clicked(object? sender, System.EventArgs e)
@@ -888,5 +889,14 @@ public partial class MainViewModel : ViewModelBase
             ImportPanelVisible = false;
             SelectedBackup = null;
         }        
+    }
+
+    public CommandHandler SortBackup_Clicked => new CommandHandler(() => SortBackup(true));
+
+    void SortBackup(bool priority = false)
+    {
+        BackupFoods = priority ?
+            new ObservableCollection<FoodItem>(BackupFoods.OrderBy(x => x.LastTime)) :
+            new ObservableCollection<FoodItem>(BackupFoods.OrderBy(x => x.Name).ThenByDescending(x => x.Calories));
     }
 }

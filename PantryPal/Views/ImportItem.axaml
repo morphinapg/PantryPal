@@ -30,7 +30,10 @@
   </UserControl.Styles>
   
   <Grid Margin="20" RowDefinitions="Auto,*,Auto">
-    <TextBlock Text="Import Previous Food" FontSize="24" FontWeight="Bold" Margin="15"/>
+    <Grid ColumnDefinitions="*,Auto">
+		<TextBlock Text="Import Previous Food" FontSize="24" FontWeight="Bold" Margin="15"/>
+        <Button Content="Sort" Grid.Column="1" Command="{Binding SortBackup_Clicked}"/>
+    </Grid>
     <ListBox ItemsSource="{Binding BackupFoods}" Grid.Row="1" SelectedItem="{Binding SelectedBackup}">
       <ListBox.ItemTemplate>
         <DataTemplate DataType="vm:FoodItem">

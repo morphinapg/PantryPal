@@ -29,20 +29,20 @@ public partial class MainView : UserControl
         {
             AddItemBox.Loaded += AddItemBox_Loaded;
 
-            
-        }        
+
+        }
     }
 
     private void MainView_DataContextChanged(object? sender, EventArgs e)
     {
         if (DataContext is MainViewModel model)
-        {           
+        {
             model.BackupClicked += Model_BackupClicked;
             model.RestoreClicked += Model_RestoreClicked;
         }
     }
 
-    
+
 
     private void AddItemBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -51,13 +51,13 @@ public partial class MainView : UserControl
         if (toplevel is not null)
         {
             InsetsManager = toplevel.InsetsManager;
-            
+
             //if (InsetsManager is not null)
             //    InsetsManager.DisplayEdgeToEdge = true;
 
             InputPane = toplevel.InputPane;
 
-            if (InputPane is not null) 
+            if (InputPane is not null)
                 InputPane.StateChanged += InputPane_StateChanged;
 
 
@@ -69,14 +69,14 @@ public partial class MainView : UserControl
             toplevel.BackRequested += TopLevel_BackRequested;
         }
 
-        
+
     }
 
     private void InputPane_StateChanged(object? sender, InputPaneStateEventArgs e)
     {
         if (DataContext is MainViewModel model && InputPane is not null && InsetsManager is not null)
         {
-            var OccludedArea = InputPane.OccludedRect;            
+            var OccludedArea = InputPane.OccludedRect;
 
             model.SafeArea = new Avalonia.Thickness(0, 0, 0, OccludedArea.Height);
 
@@ -178,9 +178,9 @@ public partial class MainView : UserControl
                     catch (Exception)
                     {
                         await MessageBoxManager.GetMessageBoxStandard("Error", "Error reading file. The file may not be a PantryPal backup file.", ButtonEnum.Ok, Icon.Error).ShowAsync();
-                    }                    
-                }   
-                
+                    }
+                }
+
             }
         }
     }
@@ -260,7 +260,7 @@ public partial class MainView : UserControl
 
             model.Filterclearing = false;
         }
-        
+
     }
 
     private void TextBox_GotFocus(object? sender, Avalonia.Input.FocusChangedEventArgs e)
