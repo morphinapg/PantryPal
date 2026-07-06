@@ -241,10 +241,11 @@ public partial class MainViewModel : ViewModelBase
                                 LastTimeScores[x] = LastTimeZ;
                                 CombinedScores[x] = Combined;
 
+
                                 return Combined;
                             }).ToList();
 
-                            double? 
+                            double?
                                 CombinedAvg = Combined.Average(x => x),
                                 CombinedDev = Combined.Select(x =>
                                 {
@@ -252,6 +253,13 @@ public partial class MainViewModel : ViewModelBase
                                     double diff = x.Value - CombinedAvg.Value;
                                     return diff * diff;
                                 }).Average();
+
+                            CombinedDev = Combined.Select(x =>
+                            {
+                                if (x is null || CombinedAvg is null) return default(double?);
+                                double diff = x.Value - CombinedAvg.Value;
+                                return diff * diff;
+                            }).Average();
 
                             if (CombinedDev is not null)
                                 CombinedDev = Math.Sqrt(CombinedDev.Value);

@@ -205,7 +205,7 @@ namespace PantryPal.ViewModels
             set
             {
                 _quantity = value;
-                
+
                 OnPropertyChanged(nameof(Quantity));
             }
         }
@@ -257,7 +257,7 @@ namespace PantryPal.ViewModels
                 {
                     Quantity = null;
                     MaxQuantity = null;
-                }                    
+                }
                 OnPropertyChanged(nameof(UseNumberOfServings));
                 OnPropertyChanged(nameof(SliderEnabled));
             }
@@ -320,7 +320,7 @@ namespace PantryPal.ViewModels
 
         public CommandHandler Edit_Item => new CommandHandler(Edit);
 
-        
+
         double? _filter;
         public double? Filter
         {
@@ -361,7 +361,7 @@ namespace PantryPal.ViewModels
                             servings = MaxRounded;
                     }
 
-                    
+
 
                     if (UseMaxServings && MaxServings < servings)
                         servings = MaxServings;
@@ -373,7 +373,7 @@ namespace PantryPal.ViewModels
                         servings = Quantity;
 
                     if (UseMinServings && MinServings > servings)
-                        servings = 0;  
+                        servings = 0;
 
                     var calories = servings * Calories;
 
@@ -382,7 +382,7 @@ namespace PantryPal.ViewModels
                     OnPropertyChanged(nameof(SuggestedCalories));
                     OnPropertyChanged(nameof(FilteredServings));
 
-                    
+
 
                     return Convert.ToInt32(calories);
                 }
@@ -392,7 +392,7 @@ namespace PantryPal.ViewModels
 
                     return Maximum < Calories ? Convert.ToInt32(Maximum) : Convert.ToInt32(Calories);
                 }
-                    
+
             }
         }
 
@@ -429,7 +429,7 @@ namespace PantryPal.ViewModels
                         return servings != 1 ? servings.ToString("#,##0.##") + " servings left - " : "1 serving left - ";
                 }
                 else
-                    return null;                
+                    return null;
             }
         }
 
@@ -538,7 +538,7 @@ namespace PantryPal.ViewModels
             IsSnack = other.IsSnack;
             Location = other.Location;
             MaxQuantity = other.MaxQuantity;
-            Quantity = other.Quantity;            
+            Quantity = other.Quantity;
             UseNumberOfServings = other.UseNumberOfServings;
             MaxServings = other.MaxServings;
             UseMaxServings = other.UseMaxServings;
@@ -606,7 +606,7 @@ namespace PantryPal.ViewModels
         }
 
         //Will be used to store partial servings
-        
+
         //public double? PartialServings;
 
         void RecordConsumption(double amountEaten)
@@ -638,6 +638,34 @@ namespace PantryPal.ViewModels
         public override string ToString()
         {
             return Name is null ? "null" : Name;
+        }
+
+        public CommandHandler DebugInfo_Click => new CommandHandler(DebugInfo);
+
+        async void DebugInfo()
+        {
+            double ExpirationWeight = 1 + (Urgency ?? 0),
+                    LastTimeWeight = (1 + (DecayedAmount ?? 0)) / ExpirationWeight;
+
+            string info = $"Name: {Name}\n" +
+                          $"Emoji: {Emoji}\n" +
+                          $"Calories: {Calories}\n" +
+                          (UsePartsPerServing ? $"PartsPerServing: {PartsPerServing}\n" : string.Empty) +
+                          (UseMinServings ? $"MinServings: {MinServings}\n" : string.Empty) +
+                          (ExpirationDate.HasValue ? $"ExpirationDate: {ExpirationDate.Value.ToString("d")}\n" : string.Empty) +
+                          $"IsSnack: {IsSnack}\n" +
+                          $"Location: {Location}\n" +
+                          $"Quantity: {Quantity}\n" +
+                          (MaxQuantity > Quantity ? $"MaxQuantity: {MaxQuantity}\n" : string.Empty) +
+                          (UseMaxServings ? $"MaxServings: {MaxServings}\n" : string.Empty) +
+                          (LastConsumedTime.HasValue ? $"LastConsumedTime: {LastConsumedTime}\n" : string.Empty) +
+                          $"LastTime (Adjusted): {LastTime}\n" +
+                          $"DecayedAmount: {DecayedAmount}\n" +
+                          $"Urgency: {Urgency}\n" +
+                          $"ExpirationWeight: {ExpirationWeight}\n" +
+                          $"LastTimeWeight: {LastTimeWeight}\n";
+
+            await MessageBoxManager.GetMessageBoxStandard("Debug Info", info, MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Info).ShowAsync();
         }
     }
 }
